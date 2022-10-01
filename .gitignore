@@ -1,0 +1,5 @@
+log
+System.map
+testfile
+vmlinux
+kernel/*.o
