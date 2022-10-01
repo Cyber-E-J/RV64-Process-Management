@@ -2,4 +2,6 @@ log
 System.map
 testfile
 vmlinux
-kernel/*.o
+arch/riscv/kernel/*.o
+.DS_Store
+arch/riscv/libs/*.o
