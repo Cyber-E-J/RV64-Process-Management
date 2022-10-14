@@ -1,24 +1,18 @@
-#include "defs.h"
-#include "print.h"
-extern int test();
+typedef unsigned long long uint64_t;
+extern puts();
+extern init();
+extern get_cycles();
+extern struct sbiret sbi_call(uint64_t ext, uint64_t fid, uint64_t arg0,
+                              uint64_t arg1, uint64_t arg2, uint64_t arg3,
+                              uint64_t arg4, uint64_t arg5);
 
 int main() {
-  puts("Hello riscv \n");
-  // Change the number to your stu_id.
-  //puts("3200104810\n");
-
-
-  /* for debug */
-  // puts("test: before put_num\n");
-
-
-  put_num(3200104810);
-
-
-
-  /* for debug */
-  // puts("test: after put_num\n");
-
-  test();
+  int a = 0;
+  init();
+  while (1) {
+    if (a++ > 10000) {
+      a = 0;
+    }
+  }
   return 0;
 }
