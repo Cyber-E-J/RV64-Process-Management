@@ -3,6 +3,8 @@ SECTIONS
 {
 	. = BASE_ADDR;
 	.text : {
+		*(.text.init)
+		*(.text.entry)
 		*(.text)
 		*(.text.*)
 	 }
