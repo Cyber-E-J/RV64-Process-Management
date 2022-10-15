@@ -1,9 +1,9 @@
 #include "defs.h"
 #include "riscv.h"
-volatile unsigned long long ticks;
+volatile unsigned long long ticks=0;
 
 // 需要自行修改 timebase 使得时钟中断的间隔恰好为 1s
-static uint64_t timebase = /* your code */;
+static uint64_t timebase = /* your code */  10000000;
 
 // 使用 rdtime 汇编指令获得当前 mtime 中的值并返回
 // 你并不需要修改该函数
@@ -26,15 +26,31 @@ uint64_t get_cycles(void) {
 }
 
 void clock_init(void) {
-  puts("ZJU OS LAB 2       Student_ID:123456\n");
+  puts("ZJU OS LAB 2       Student_ID:3200104810\n");
+  
+  //stie在第五位
+  set_csr(sie,0x100000);
+  
+  puts("step1\n");
 
   // 对 sie 寄存器中的时钟中断位设置（ sie[stie] = 1 ）以启用时钟中断
   // 设置第一个时钟中断
   // your code
+    
+  ticks++;
+
+  sbi_call(0,0,get_cycles(),0,0,0,0,0);
+
+  puts("step2\n");
+
 }
 
 void clock_set_next_event(void) {
   // 获取当前 cpu cycles 数并计算下一个时钟中断的发生时刻
   // 通过调用 OpenSBI 提供的函数触发时钟中断
   // your code
+  puts("in call next\n");
+  ticks++;
+  sbi_call(0,0,get_cycles()+timebase,0,0,0,0,0);
+
 }
