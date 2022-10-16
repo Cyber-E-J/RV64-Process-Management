@@ -6,13 +6,9 @@
 .align 2
 
 trap_s:
-	# save caller-saved registers and sepc
+	# save caller-saved registers and spec
 
-	# call handler_s(scause)
-	
-	# load sepc and caller-saved registers
-
-		#save caller-saved registers and spec
+	# save all registers
 	addi sp, sp, -256
     sd x1, 0(sp)
     sd x2, 8(sp)
@@ -45,16 +41,22 @@ trap_s:
 	sd x29, 224(sp)
 	sd x30, 232(sp)
 	sd x31, 240(sp)
+	# save sepc registers
     csrr t0, sepc
     sd t0, 248(sp)
 
 	# call handler_s(scause)
+	
 	csrr a0, scause
+	# turn to the addr of handler_s
     call handler_s
 	
 	# load sepc and callee-saved registers
+
+	# load sepc
 	ld t0, 248(sp)
     csrw sepc, t0
+	# save all registers
     ld x1, 0(sp)
     ld x2, 8(sp)
     ld x3, 16(sp)

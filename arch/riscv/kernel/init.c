@@ -7,27 +7,13 @@ extern void clock_init(void);
 void intr_enable(void) {
   // 设置 sstatus[sie] = 1, 打开 s 模式的中断开关
   // your code
-
-  set_csr(sstatus,0x2);
-  // __asm__ volatile (
-	// 	"csrsi sstatus, 0x0000000000000002\n"
-	// 	:
-	// 	:
-	// );
-
+  set_csr(sstatus, 0x2);
 }
 
 void intr_disable(void) {
   // 设置 sstatus[sie] = 0, 关闭 s 模式的中断开关
   // your code
-
-  clear_csr(sstatus,0x2);
-  // __asm__ volatile (
-	// 	"csrci sstatus, 0x0000000000000002\n"
-	// 	:
-	// 	:
-	// );
-
+  clear_csr(sstatus, 0xfffffffffffffffd);
 }
 
 //C 语言中，可以使用取地址符和函数名，获取函数的地址。
