@@ -3,7 +3,7 @@ extern test();
 extern init();
 
 int main() {
-  puts("ZJU OS LAB 3      Student1:123456 张三     Student2:123456 李四\n");
+  puts("ZJU OS LAB 3      Student1:32000104810 周逸杰     Student2:320012523 张景森\n");
   init();
   test();
   while (1) {

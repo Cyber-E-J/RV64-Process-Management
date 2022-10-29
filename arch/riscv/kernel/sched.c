@@ -15,6 +15,12 @@ extern void __init_sepc(void);
 // If next==current,do nothing; else update current and call __switch_to.
 void switch_to(struct task_struct* next) {
   // your code
+  if(next->pid == current->pid) return;
+  else{
+    struct task_struct* temp = current;
+    current = next;
+    __switch_to(current,next);
+  }
 }
 
 int task_init_done = 0;
@@ -23,24 +29,49 @@ void task_init(void) {
   puts("task init...\n");
 
   // initialize task[0]
+  // current 是 地址
   current = (struct task_struct*)Kernel_Page;
+  // state 默认是TASK_RUNNING
   current->state = TASK_RUNNING;
-  current->counter = 0;
+  // counter运行剩余时间为0
+  current->counter = 1;
+  // 最低priority
   current->priority = 5;
+  // 没有被block
   current->blocked = 0;
+  // 进程编号为0
   current->pid = 0;
   task[0] = current;
   task[0]->thread.sp = (unsigned long long)task[0] + TASK_SIZE;
+  task[0]->thread.ra = &__init_sepc;
 
   // set other 4 tasks
+  // LAB_TEST_NUM 为4
   for (int i = 1; i <= LAB_TEST_NUM; ++i) {
     /* your code */
+      // current 是 地址
+    current = (struct task_struct*)(Kernel_Page + i * TASK_SIZE);
+    // state 默认是TASK_RUNNING
+    current->state = TASK_RUNNING;
+    // counter运行剩余时间为0
+    current->counter = 0;
+    // 最低priority--?
+    current->priority = 5;
+    // 没有被block
+    current->blocked = 0;
+    // 进程编号为0
+    current->pid = i;
+    task[i] = current;
+    task[i]->thread.sp = (unsigned long long)task[i] + TASK_SIZE;
+    task[i]->thread.ra = &__init_sepc;
 
     printf("[PID = %d] Process Create Successfully!\n", task[i]->pid);
   }
   task_init_done = 1;
 }
 
+
+/* Shortest Job First */
 #ifdef SJF
 // simulate the cpu timeslice, which measn a short time frame that gets assigned
 // to process for CPU execution
@@ -51,6 +82,11 @@ void do_timer(void) {
          current->pid, current->counter, current->priority);
   // current process's counter -1, judge whether to schedule or go on.
   /* your code */
+
+  current->counter--;
+  if(current->counter==0){
+    schedule();
+  }
 }
 
 // Select the next task to run. If all tasks are done(counter=0), set task0's
@@ -59,15 +95,32 @@ void schedule(void) {
   unsigned char next;
   /* your code */
 
+  int i;
+  int shortest_counter = LAB_TEST_COUNTER+1;
+  int shortest_pid = 0;
+  for(i=1;i<=LAB_TEST_NUM;i++){
+    if(task[i]->counter != 0 && task[i]->counter < shortest_counter)
+      shortest_pid = i;
+  }
+
+  if(shortest_pid == 0) {
+    printf(" all is done. switch to task 0\n");
+    next = 0;
+  }
+  else next = task[shortest_pid];
+
+  
   if (current->pid != task[next]->pid) {
-    printf(
-        "[ %d -> %d ] Switch from task %d[%lx] to task %d[%lx], prio: %d, "
-        "counter: %d\n",
-        current->pid, task[next]->pid, current->pid,
-        (unsigned long)current->thread.sp, task[next]->pid,
-        (unsigned long)task[next], task[next]->priority, task[next]->counter);
+  printf(
+      "[ %d -> %d ] Switch from task %d[%lx] to task %d[%lx], prio: %d, "
+      "counter: %d\n",
+      current->pid, task[next]->pid, current->pid,
+      (unsigned long)current->thread.sp, task[next]->pid,
+      (unsigned long)task[next], task[next]->priority, task[next]->counter);
   }
   switch_to(task[next]);
+  
+  
 }
 
 #endif
@@ -83,6 +136,11 @@ void do_timer(void) {
          current->pid, current->counter, current->priority);
   // current process's counter -1, judge whether to schedule or go on.
   /* your code */
+
+  current->counter--;
+  if(current->counter==0){
+    schedule();
+  }
 }
 
 // Select the next task to run. If all tasks are done(counter=0), set task0's
@@ -90,6 +148,21 @@ void do_timer(void) {
 void schedule(void) {
   unsigned char next;
   /* your code */
+
+  int i;
+  int highest_priority = 6;
+  int prior_pid = 0;
+  for(i=1;i<=LAB_TEST_NUM;i++){
+    if(task[i]->counter != 0 && task[i]->priority < highest_priority)
+      prior_pid = i;
+  }
+
+  if(prior_id == 0) {
+    printf(" all is done. switch to task 0\n");
+    next = 0;
+  }
+  else next = task[prior_pid];
+
 
   if (current->pid != task[next]->pid) {
     printf(
