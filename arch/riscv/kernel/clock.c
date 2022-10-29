@@ -25,17 +25,21 @@ uint64_t get_cycles(void) {
 }
 
 void clock_init(void) {
+  puts("ZJU OS LAB 2       Student_ID:3200104810 & 3200102523\n");
   // 对 sie 寄存器中的时钟中断位设置（ sie[stie] = 1 ）以启用时钟中断
   // 设置第一个时钟中断
   // your code
-
-  ticks = 0;
+  
+  //sie在第五位
+  set_csr(sie, 0x20);
+  ticks++;
+  sbi_call(0, 0, get_cycles(), 0, 0, 0, 0, 0);
 }
 
 void clock_set_next_event(void) {
   // 获取当前 cpu cycles 数并计算下一个时钟中断的发生时刻
   // 通过调用 OpenSBI 提供的函数触发时钟中断
   // your code
-
   ticks++;
+  sbi_call(0, 0, get_cycles()+timebase, 0, 0, 0, 0, 0);
 }
