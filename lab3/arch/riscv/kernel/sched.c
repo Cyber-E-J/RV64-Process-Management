@@ -74,33 +74,33 @@ void do_timer(void) {
 //Select the next task to run. If all tasks are done(counter=0), set task0's counter to 1 and it would 
 //assign new test case.
 void schedule(void) {
-    unsigned char next; 
-    /*your code*/
-    _Bool allzero = 1;
-    next = LAB_TEST_NUM;
-    for(int i = LAB_TEST_NUM; i > 0; i--){
-        if(task[i]->state == TASK_RUNNING){
-            if(task[i]->counter > 0) allzero = 0;
-            if((task[next]->counter <= 0 && task[i]->counter > 0) || (task[i]->counter > 0 && task[i]->counter < task[next]->counter))
-                next = i;
-        }
-    }
+  unsigned char next;
+  /* your code */
 
-    if(allzero){
-	printf("Current Setting is done, use task0 to initialize a new setting.\n");
-        task[0]->counter = 1;
-	next = 0;
-    }
+  int i;
+  int highest_priority = 6;
+  int prior_pid = 0;
+  for(i=1;i<=LAB_TEST_NUM;i++){
+    if(task[i]->counter != 0 && task[i]->priority < highest_priority)
+      prior_pid = i;
+  }
 
-    if(current->pid != task[next]->pid)
-    {
-        printf("[ %d -> %d ] Switch from task %d[%lx] to task %d[%lx], prio: %d, counter: %d\n", 
-        current->pid,task[next]->pid,
-        current->pid, (unsigned long)current->thread.sp, 
-        task[next]->pid, (unsigned long)task[next], 
-        task[next]->priority, task[next]->counter);
-    }
-    switch_to(task[next]);
+  if(prior_pid == 0) {
+    printf(" all is done. switch to task 0\n");
+    next = 0;
+  }
+  else next = task[prior_pid];
+
+
+  if (current->pid != task[next]->pid) {
+    printf(
+        "[ %d -> %d ] Switch from task %d[%lx] to task %d[%lx], prio: %d, "
+        "counter: %d\n",
+        current->pid, task[next]->pid, current->pid,
+        (unsigned long)current->thread.sp, task[next]->pid,
+        (unsigned long)task[next], task[next]->priority, task[next]->counter);
+  }
+  switch_to(task[next]);
 }
 
 #endif
@@ -121,37 +121,34 @@ void do_timer(void) {
 //Select the next task to run. If all tasks are done(counter=0), set task0's counter to 1 and it would 
 //assign new test case.
 void schedule(void) {
-    unsigned char next; 
-    /*your code*/
-    _Bool allzero = 1;
-    next = LAB_TEST_NUM;
-    for(int i = LAB_TEST_NUM; i > 0; i--){
-        if(task[i]->state == TASK_RUNNING){
-            if(task[i]->counter > 0) allzero = 0;
-            if(task[i]->priority < task[next]->priority && task[i]->counter > 0) next = i;
-	    else if((task[next]->counter <= 0 && task[i]->counter > 0)|| (task[i]->priority == task[next]->priority && task[i]->counter < task[next]->counter && task[i]->counter > 0))
-                next = i;
-        }
-    }
+  unsigned char next;
+  /* your code */
 
-    if(allzero){
-	printf("Current Setting is done, use task0 to initialize a new setting.\n");
-        task[0]->counter = 1;
-	next = 0;
-    }
+  int i;
+  int highest_priority = 6;
+  int prior_pid = 0;
+  for(i=1;i<=LAB_TEST_NUM;i++){
+    if(task[i]->counter != 0 && task[i]->priority < highest_priority)
+      prior_pid = i;
+  }
 
-    if(current->pid != task[next]->pid){
-        printf("[ %d -> %d ] Switch from task %d[%lx] to task %d[%lx], prio: %d, counter: %d\n", 
-        current->pid,task[next]->pid,
-        current->pid, (unsigned long)current->thread.sp, 
-        task[next]->pid, (unsigned long)task[next], 
-        task[next]->priority, task[next]->counter);
-    }
+  if(prior_pid == 0) {
+    printf(" all is done. switch to task 0\n");
+    next = 0;
+  }
+  else next = task[prior_pid];
 
-    switch_to(task[next]);
 
+  if (current->pid != task[next]->pid) {
+    printf(
+        "[ %d -> %d ] Switch from task %d[%lx] to task %d[%lx], prio: %d, "
+        "counter: %d\n",
+        current->pid, task[next]->pid, current->pid,
+        (unsigned long)current->thread.sp, task[next]->pid,
+        (unsigned long)task[next], task[next]->priority, task[next]->counter);
+  }
+  switch_to(task[next]);
 }
-
 #endif
 
 
