@@ -26,6 +26,8 @@ SECTIONS
 	bss_end = .;
 	. += 0x8000;
 	stack_top = .;
+	test_result = .;
+	. += 0x4000;
 	_end = .;
 }
 
