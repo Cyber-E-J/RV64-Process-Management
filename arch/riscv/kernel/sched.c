@@ -1,6 +1,7 @@
 #include "sched.h"
 
 #include "stdio.h"
+#define SJF
 
 #define Kernel_Page 0x80210000
 #define LOW_MEMORY 0x80211000
@@ -16,10 +17,10 @@ extern void __init_sepc(void);
 void switch_to(struct task_struct* next) {
   // your code
   if(next->pid == current->pid) return;
-  else{
-    struct task_struct* temp = current;
+  else {
+    struct task_struct* tmp = current;
     current = next;
-    __switch_to(current,next);
+    __switch_to(tmp, next);
   }
 }
 
@@ -49,7 +50,7 @@ void task_init(void) {
   // LAB_TEST_NUM 为4
   for (int i = 1; i <= LAB_TEST_NUM; ++i) {
     /* your code */
-      // current 是 地址
+    // current 是 地址
     current = (struct task_struct*)(Kernel_Page + i * TASK_SIZE);
     // state 默认是TASK_RUNNING
     current->state = TASK_RUNNING;
@@ -119,7 +120,6 @@ void schedule(void) {
       (unsigned long)task[next], task[next]->priority, task[next]->counter);
   }
   switch_to(task[next]);
-  
   
 }
 
