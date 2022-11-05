@@ -1,7 +1,6 @@
 #include "sched.h"
 
 #include "stdio.h"
-#define SJF
 
 #define Kernel_Page 0x80210000
 #define LOW_MEMORY 0x80211000
@@ -51,18 +50,18 @@ void task_init(void) {
   for (int i = 1; i <= LAB_TEST_NUM; ++i) {
     /* your code */
     // current 是 地址
-    current = (struct task_struct*)(Kernel_Page + i * TASK_SIZE);
+    task[i] = (struct task_struct*)(Kernel_Page + i * TASK_SIZE);
     // state 默认是TASK_RUNNING
-    current->state = TASK_RUNNING;
+    task[i]->state = TASK_RUNNING;
     // counter运行剩余时间为0
-    current->counter = 0;
+    task[i]->counter = 0;
     // 最低priority--?
-    current->priority = 5;
+    task[i]->priority = 5;
     // 没有被block
-    current->blocked = 0;
+    task[i]->blocked = 0;
     // 进程编号为0
-    current->pid = i;
-    task[i] = current;
+    task[i]->pid = i;
+    // task[i] = current;
     task[i]->thread.sp = (unsigned long long)task[i] + TASK_SIZE;
     task[i]->thread.ra = &__init_sepc;
 
@@ -83,9 +82,8 @@ void do_timer(void) {
          current->pid, current->counter, current->priority);
   // current process's counter -1, judge whether to schedule or go on.
   /* your code */
-
   current->counter--;
-  if(current->counter==0){
+  if(current->counter <= 0){
     schedule();
   }
 }
@@ -112,7 +110,7 @@ void schedule(void) {
 
   
   if (current->pid != task[next]->pid) {
-  printf(
+    printf(
       "[ %d -> %d ] Switch from task %d[%lx] to task %d[%lx], prio: %d, "
       "counter: %d\n",
       current->pid, task[next]->pid, current->pid,
@@ -136,9 +134,8 @@ void do_timer(void) {
          current->pid, current->counter, current->priority);
   // current process's counter -1, judge whether to schedule or go on.
   /* your code */
-
   current->counter--;
-  if(current->counter==0){
+  if(current->counter <= 0){
     schedule();
   }
 }
@@ -162,7 +159,6 @@ void schedule(void) {
     next = 0;
   }
   else next = task[prior_pid];
-
 
   if (current->pid != task[next]->pid) {
     printf(
