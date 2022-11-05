@@ -40,7 +40,7 @@ run: vmlinux
 	@qemu-system-riscv64 -nographic --machine virt -bios default -device loader,file=vmlinux,addr=0x80200000 -D log
 
 debug: vmlinux
-	@qemu-system-riscv64 -nographic -machine virt -bios default -device loader,file=vmlinux,addr=0x80200000 -S -s
+	@qemu-system-riscv64 -nographic -machine virt -bios default -device loader,file=vmlinux,addr=0x80200000 -S -s -g
 
 clean:
 	$(MAKE) -C arch/riscv clean
