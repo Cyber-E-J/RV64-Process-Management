@@ -16,10 +16,10 @@ extern void __init_sepc(void);
 void switch_to(struct task_struct* next) {
   // your code
   if(next->pid == current->pid) return;
-  else{
-    struct task_struct* temp = current;
+  else {
+    struct task_struct* tmp = current;
     current = next;
-    __switch_to(current,next);
+    __switch_to(tmp, next);
   }
 }
 
@@ -49,19 +49,19 @@ void task_init(void) {
   // LAB_TEST_NUM 为4
   for (int i = 1; i <= LAB_TEST_NUM; ++i) {
     /* your code */
-      // current 是 地址
-    current = (struct task_struct*)(Kernel_Page + i * TASK_SIZE);
+    // current 是 地址
+    task[i] = (struct task_struct*)(Kernel_Page + i * TASK_SIZE);
     // state 默认是TASK_RUNNING
-    current->state = TASK_RUNNING;
+    task[i]->state = TASK_RUNNING;
     // counter运行剩余时间为0
-    current->counter = 0;
+    task[i]->counter = 0;
     // 最低priority--?
-    current->priority = 5;
+    task[i]->priority = 5;
     // 没有被block
-    current->blocked = 0;
+    task[i]->blocked = 0;
     // 进程编号为0
-    current->pid = i;
-    task[i] = current;
+    task[i]->pid = i;
+    // task[i] = current;
     task[i]->thread.sp = (unsigned long long)task[i] + TASK_SIZE;
     task[i]->thread.ra = &__init_sepc;
 
@@ -82,9 +82,8 @@ void do_timer(void) {
          current->pid, current->counter, current->priority);
   // current process's counter -1, judge whether to schedule or go on.
   /* your code */
-
   current->counter--;
-  if(current->counter==0){
+  if(current->counter <= 0){
     schedule();
   }
 }
@@ -111,7 +110,7 @@ void schedule(void) {
 
   
   if (current->pid != task[next]->pid) {
-  printf(
+    printf(
       "[ %d -> %d ] Switch from task %d[%lx] to task %d[%lx], prio: %d, "
       "counter: %d\n",
       current->pid, task[next]->pid, current->pid,
@@ -119,7 +118,6 @@ void schedule(void) {
       (unsigned long)task[next], task[next]->priority, task[next]->counter);
   }
   switch_to(task[next]);
-  
   
 }
 
@@ -136,9 +134,8 @@ void do_timer(void) {
          current->pid, current->counter, current->priority);
   // current process's counter -1, judge whether to schedule or go on.
   /* your code */
-
   current->counter--;
-  if(current->counter==0){
+  if(current->counter <= 0){
     schedule();
   }
 }
@@ -162,7 +159,6 @@ void schedule(void) {
     next = 0;
   }
   else next = task[prior_pid];
-
 
   if (current->pid != task[next]->pid) {
     printf(

@@ -13,10 +13,9 @@ ABI     = lp64
 INCLUDE = -I$(shell pwd)/include -I$(shell pwd)/arch/riscv/include
 CF      = -g -march=$(ISA) -mabi=$(ABI) -mcmodel=medany -ffunction-sections -fdata-sections -nostartfiles -nostdlib -nostdinc -fno-builtin -static -lgcc 
 
-# TASK_MM = -DPRIORITY
-
 #• -DSJF （短作业优先式）。
 #• -DPRIORITY （优先级抢占式）
+# TASK_MM = -DPRIORITY
 TASK_MM = -DSJF
 
 CFLAG   = ${CF} ${INCLUDE} ${TASK_MM}
