@@ -68,6 +68,7 @@ void task_init(void) {
     printf("[PID = %d] Process Create Successfully!\n", task[i]->pid);
   }
   task_init_done = 1;
+  //current = task[4];
 }
 
 
@@ -85,6 +86,7 @@ void do_timer(void) {
   current->counter--;
   if(current->counter <= 0){
     schedule();
+    //current->counter = 0;
   }
 }
 
@@ -95,19 +97,23 @@ void schedule(void) {
   /* your code */
 
   int i;
-  int shortest_counter = LAB_TEST_COUNTER+1;
+  int shortest_counter = LAB_TEST_COUNTER+1;// initial as max
   int shortest_pid = 0;
   for(i=1;i<=LAB_TEST_NUM;i++){
-    if(task[i]->counter != 0 && task[i]->counter < shortest_counter)
+    if(task[i]->counter > 0 && task[i]->counter < shortest_counter){
       shortest_pid = i;
+      shortest_counter = task[i]->counter;
+    }
   }
+
+  //printf("%d,%d",shortest_pid,shortest_counter);
 
   if(shortest_pid == 0) {
     printf(" all is done. switch to task 0\n");
     next = 0;
   }
-  else next = task[shortest_pid];
-
+  else //next = task[shortest_pid];
+    next = shortest_pid;
   
   if (current->pid != task[next]->pid) {
     printf(
@@ -150,15 +156,19 @@ void schedule(void) {
   int highest_priority = 6;
   int prior_pid = 0;
   for(i=1;i<=LAB_TEST_NUM;i++){
-    if(task[i]->counter != 0 && task[i]->priority < highest_priority)
+    if(task[i]->counter > 0 && task[i]->priority < highest_priority){
       prior_pid = i;
+      highest_priority = task[i]->priority;
+    }
   }
 
-  if(prior_id == 0) {
+  //printf("%d,%d", prior_pid, highest_priority);
+
+  if(prior_pid == 0) {
     printf(" all is done. switch to task 0\n");
     next = 0;
   }
-  else next = task[prior_pid];
+  else next = prior_pid;
 
   if (current->pid != task[next]->pid) {
     printf(
