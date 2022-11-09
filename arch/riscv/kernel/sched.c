@@ -97,9 +97,9 @@ void schedule(void) {
   /* your code */
 
   int i;
-  int shortest_counter = LAB_TEST_COUNTER+1;// initial as max
+  int shortest_counter = 100+1;// initial as max
   int shortest_pid = 0;
-  for(i=1;i<=LAB_TEST_NUM;i++){
+  for(i=LAB_TEST_NUM;i>=1;i--){
     if(task[i]->counter > 0 && task[i]->counter < shortest_counter){
       shortest_pid = i;
       shortest_counter = task[i]->counter;
@@ -155,7 +155,7 @@ void schedule(void) {
   int i;
   int highest_priority = 6;
   int prior_pid = 0;
-  for(i=1;i<=LAB_TEST_NUM;i++){
+  for(i=LAB_TEST_NUM;i>=1;i--){
     if(task[i]->counter > 0 && task[i]->priority < highest_priority){
       prior_pid = i;
       highest_priority = task[i]->priority;
